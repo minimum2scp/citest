@@ -1,0 +1,23 @@
+machine:
+  timezone:
+    Asia/Tokyo
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker pull minimum2scp/baseimage:latest
+
+test:
+  override:
+    - cat /proc/cpuinfo
+    - nproc
+    - free -m
+    - df -Th
+    - docker run --name c1 -d minimum2scp/baseimage:latest
+    - docker exec c1 uname -a
+    - docker stop c1
+    - docker rm c1
+    - docker rmi minimum2scp/baseimage:latest
+

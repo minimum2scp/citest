@@ -1,20 +1,21 @@
 machine:
   timezone:
     Asia/Tokyo
+  python:
+    version: 2.7
   services:
     - docker
 
 dependencies:
   override:
+    - pip install ansible
     - docker info
     - docker pull minimum2scp/baseimage:latest
 
 test:
   override:
-    - cat /proc/cpuinfo
-    - nproc
-    - free -m
-    - df -Th
+    - ansible localhost -m setup
+    - dpkg -l
     - docker run --name c1 -d minimum2scp/baseimage:latest
     - docker exec c1 uname -a
     - docker stop c1

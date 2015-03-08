@@ -12,6 +12,5 @@ dependencies:
 test:
   override:
     - docker run --name c1 -d minimum2scp/baseimage:latest
-    - docker stop c1
-    - docker rm c1
+    - docker exec c1 uname -a
 

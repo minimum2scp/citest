@@ -1,16 +1,10 @@
 machine:
-  timezone:
-    Asia/Tokyo
-  services:
-    - docker
-
+  python:
+    version: 2.7
 dependencies:
   override:
-    - docker info
-    - docker pull minimum2scp/baseimage:latest
-
+    - pip install ansible
 test:
   override:
-    - docker run --name c1 -d minimum2scp/baseimage:latest
-    - docker exec c1 uname -a
-
+    - ansible -i hosts -m setup all
+    - ohai

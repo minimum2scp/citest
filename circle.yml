@@ -6,7 +6,10 @@ machine:
 dependencies:
   override:
     - pip install ansible
-    - docker --version && docker info && docker pull minimum2scp/baseimage:latest
+    - docker --version
+    - docker version
+    - docker info
+    - docker pull minimum2scp/baseimage:latest
 test:
   override:
     - ansible -i hosts -m setup all

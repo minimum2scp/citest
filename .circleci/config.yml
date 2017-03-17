@@ -1,0 +1,35 @@
+version: 2
+jobs:
+  build:
+    working_directory: /tmp
+    docker:
+      - image: debian:sid
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    steps:
+      - run: export -p
+      - run: apt-get update -qq
+      - run: apt-get install -y --no-install-recommends git openssh-client curl
+      - checkout
+      - run: apt-get install -y --no-install-recommends ansible ohai
+      - run: ansible -i /dev/null -m setup localhost
+      - run: ohai
+      - setup_docker_engine
+      - run: export -p
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run: docker version
+      - run: docker info
+      - run: docker pull minimum2scp/baseimage:latest
+      - run: docker run --name c1 -d minimum2scp/baseimage:latest
+      - run: docker exec c1 uname -a
+      - run: docker stop c1
+      - run: docker rm c1
+
+

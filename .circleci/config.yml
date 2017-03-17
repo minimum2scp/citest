@@ -9,7 +9,7 @@ jobs:
     steps:
       - run: export -p
       - run: apt-get update -qq
-      - run: apt-get install -y --no-install-recommends git openssh-client curl
+      - run: apt-get install -y --no-install-recommends git openssh-client curl jq
       - checkout
       - run: apt-get install -y --no-install-recommends ansible ohai
       - run: ansible -i /dev/null -m setup localhost
@@ -32,4 +32,13 @@ jobs:
       - run: docker stop c1
       - run: docker rm c1
 
+      - run: docker run -d -P --name nginx nginx:latest
+      - run:
+          command: |
+            set -x
+            docker ps
+            docker inspect -f '{{.NetworkSettings.Ports}}' nginx
+            port=$(docker inspect nginx | jq -r '.[0].NetworkSettings.Ports["80/tcp"][0].HostPort')
+            host=$(echo ${DOCKER_HOST} | sed -e 's@^tcp://@@' -e 's@:2376$@@')
+            curl http://${host}:${port}
 
